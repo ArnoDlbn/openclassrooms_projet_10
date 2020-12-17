@@ -9,16 +9,18 @@
 import Foundation
 import Alamofire
 
-    // MARK: - Protocol AlamoSession and class RecipleaseSession
+    // MARK: - Protocol Networking and class RecipleaseSession
 
-protocol AlamoSession {
-    func request(with url: URL, completionHandler: @escaping (DataResponse<Any>) -> Void)
+protocol Networking {
+        
+    func request(with url: URL, completionHandler: @escaping (Data?, Error?, HTTPURLResponse?) -> Void)
 }
 
-final class RecipleaseSession: AlamoSession {
-    func request(with url: URL, completionHandler: @escaping (DataResponse<Any>) -> Void) {
-        Alamofire.request(url).responseJSON { responseData in
-            completionHandler(responseData)
+final class RecipleaseSession: Networking {
+        
+    func request(with url: URL, completionHandler: @escaping (Data?, Error?, HTTPURLResponse?) -> Void) {
+        AF.request(url).responseData { (response: AFDataResponse<Data>) in
+            completionHandler(response.data, response.error, response.response)
         }
     }
 }

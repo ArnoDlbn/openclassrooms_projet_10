@@ -48,17 +48,18 @@ class SearchController: UIViewController, UITextViewDelegate {
     
     @IBAction func searchForRecipes(_ sender: UIButton) {
         activityIndicator(activityIndicator: searchActivity, button: searchRecipes, showActivityIndicator: true)
-        recipeService.request(from: 0, to: 10, ingredients: ingredients, completionHandler: { (recipe, error) in
+        recipeService.request(from: 0, to: 20, ingredients: ingredients, completionHandler: { (recipe, error) in
             DispatchQueue.main.async {
                 if error == nil {
                     self.dataRecipe = recipe
                     self.recipes = recipe!.hits
+//                    self.dataRecipe = recipe
+//                    self.recipes = self.dataRecipe!.hits
                     self.performSegue(withIdentifier: "SearchToResult", sender: nil)
                 } else {
                     self.alert(title: "Erreur", message: "Veuillez vérifier les informations renseignées et votre connexion !")
                 }
                 self.activityIndicator(activityIndicator: self.searchActivity, button: self.searchRecipes, showActivityIndicator: false)
-
             }
         })
     }
@@ -77,8 +78,6 @@ class SearchController: UIViewController, UITextViewDelegate {
         super.viewDidLoad()
         listOfIngredients.delegate = self
         activityIndicator(activityIndicator: self.searchActivity, button: self.searchRecipes, showActivityIndicator: false)
-
+        initializeHideKeyboard()
     }
-
-
 }

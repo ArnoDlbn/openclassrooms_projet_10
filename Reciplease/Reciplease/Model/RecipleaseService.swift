@@ -13,32 +13,41 @@ class RecipleaseService {
     
     // MARK: - Properties
     
-    private let session: AlamoSession
+    private let session: Networking
     
     // MARK: - Initialization
     
-    init(session: AlamoSession = RecipleaseSession()) {
+    init(session: Networking = RecipleaseSession()) {
         self.session = session
     }
     
     // MARK: - Methods
-    
+
     func request(from: Int, to: Int, ingredients: [String], completionHandler: @escaping (RecipleaseData?, Error?) -> Void) {
         
         guard let apiNumber = ApiConfiguration().apiNumber else { return }
         guard let url = URL(string: "https://api.edamam.com/search?&from=\(from)&to=\(to)&q=\(ingredients.joined(separator: ","))&app_id=\(apiNumber.apiId)&app_key=\(apiNumber.apiKey)") else { return }
-        
-        Alamofire.request(url).responseJSON { response in
-            if response.data != nil {
-                do {
-                    let responseJSON = try JSONDecoder().decode(RecipleaseData.self, from: response.data!)
-                    completionHandler(responseJSON, nil)
-                } catch {
-                    completionHandler(nil, (Error.self as! Error))
-                }
+
+        session.request(with: url) { data, error, response in
+            if error != nil {
+                return completionHandler(nil, ErrorCases.failure)
+            }
+
+            guard let r = response, r.statusCode == 200 else {
+                return completionHandler(nil, ErrorCases.wrongResponse(statusCode: response!.statusCode))
+            }
+
+            guard let d = data else {
+                return completionHandler(nil, ErrorCases.noData)
+            }
+
+            do {
+                let result = try JSONDecoder().decode(RecipleaseData.self, from: d)
+                return completionHandler(result, nil)
+            } catch {
+                return completionHandler(nil, ErrorCases.errorDecode)
             }
         }
     }
- 
     
 }

@@ -17,17 +17,18 @@ class SearchResultViewController: UITableViewController {
     var dataRecipe: RecipleaseData?
     var ingredients = [String]()
     var from = 0
-    var to = 10
+    var to = 20
+    var isLoading = false
     
     // MARK: - TableView
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dataRecipe?.hits.count ?? 0
+        return recipes.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "RecipeCell", for: indexPath) as! RecipeTableViewCell
-        let recipe = dataRecipe!.hits[indexPath.row].recipe
+        let recipe = recipes[indexPath.row].recipe
            
         cell.recipeTitle.text = "\(recipe.label)"
         cell.recipeIngredients.text = "\(recipe.ingredientLines.joined(separator: ","))"
@@ -47,29 +48,22 @@ class SearchResultViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let recipe = dataRecipe!.hits[indexPath.row].recipe
+        let recipe = recipes[indexPath.row].recipe
         performSegue(withIdentifier: "ResultToDetail", sender: recipe)
     }
     
-//    override func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-//        recipe.request(to: 40, ingredients: ingredients, completionHandler: { (recipe, error) in
-//                    DispatchQueue.main.async {
-//                        if error == nil {
-//                            self.dataRecipe = recipe
-//                        } else {
-//                            self.alert(title: "Erreur", message: "Veuillez vérifier les informations renseignées et votre connexion !")
-//                        }
-//                    }
-//                })
-//    }
-    
     override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        from += 10
-        to += 10
+        guard isLoading == false else { return }
+        isLoading = true
+        from += 20
+        to += 20
         recipeService.request(from: from, to: to, ingredients: ingredients, completionHandler: { (recipe, error) in
+            self.isLoading = false
             DispatchQueue.main.async {
                 if error == nil {
-                    self.dataRecipe = recipe
+                     self.recipes.append(contentsOf: recipe?.hits ?? [])
+//                    let r = recipe as! RecipleaseData?
+//                    self.recipes.append(contentsOf: r?.hits ?? [])
                     self.tableView.reloadData()
                 } else {
                     self.alert(title: "Erreur", message: "Veuillez vérifier les informations renseignées et votre connexion !")

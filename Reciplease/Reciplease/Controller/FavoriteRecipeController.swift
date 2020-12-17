@@ -41,13 +41,7 @@ class FavoriteRecipeController: UIViewController {
     // MARK: - Actions
     
     @IBAction func viewRecipe(_ sender: UIButton) {
-//        guard let url = URL(string: "\(recipe!.url)") else { return }
-//        UIApplication.shared.open(url)
-        
-        guard let stringUrl = recipe?.url else {
-            return
-        }
-        print(stringUrl)
+        guard let stringUrl = recipe?.url else { return }
         guard let url = URL(string: stringUrl) else { return }
         UIApplication.shared.open(url)
     }
@@ -66,11 +60,9 @@ class FavoriteRecipeController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        recipeIngredients.text = "- " + (recipe?.ingredientLines.joined(separator: "\n- "))!
         if let urlString = recipe?.image,
-            let url = URL(string: urlString),
-             let data = try? Data(contentsOf: url) {
-           
+           let url = URL(string: urlString),
+           let data = try? Data(contentsOf: url) {
             recipeImage.image = UIImage(data: data)
         }
         

@@ -10,6 +10,7 @@ import UIKit
 
 extension UIImageView {
     
+    // method to add black gradient layout on TableViewCell
     func addBlackGradientLayerInForeground() {
         let gradient = CAGradientLayer()
         
@@ -20,6 +21,7 @@ extension UIImageView {
         self.layer.insertSublayer(gradient, at: 0)
     }
     
+    // method to remove black gradient layout on TableViewCell
     func removeAllGradientLayerInForeground() {
         self.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
     }

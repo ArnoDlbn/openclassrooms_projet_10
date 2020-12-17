@@ -41,8 +41,10 @@ class FavoritesController: UITableViewController {
         
         cell.recipeTitle.text = recipe.title
         cell.recipeTime.text = recipe.totalTime
-        let url = URL(string: recipe.image!)
-        let imageData = NSData(contentsOf: url!)
+        let imageData = NSData(contentsOf: NSURL(string: "\(recipe.image)")! as URL)
+
+//        let url = URL(string: recipe.image!)
+//        let imageData = NSData(contentsOf: url!)
         cell.recipeImage.image = UIImage(data: imageData! as Data)
         cell.recipeImage.addBlackGradientLayerInForeground()
         cell.recipeIngredients.text = recipe.ingredients
@@ -58,7 +60,6 @@ class FavoritesController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let recipe = favoriteRecipe[indexPath.row]
         performSegue(withIdentifier: "FavoritesToRecipe", sender: recipe)
-//        print("\(favoriteRecipe)")
     }
     
     // MARK: - View life cycle
@@ -66,7 +67,6 @@ class FavoritesController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         loadSavedData()
-//        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
     }
 
     override func viewDidAppear(_ animated: Bool) {

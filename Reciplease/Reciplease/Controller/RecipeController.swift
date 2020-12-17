@@ -19,7 +19,6 @@ class RecipeController: UIViewController {
         do {
            return try AppDelegate.viewContext.fetch(request)
         } catch {
-            print("OUUSp")
             return []
         }
     }
@@ -72,7 +71,8 @@ class RecipeController: UIViewController {
     // MARK: - Actions
     
     @IBAction func viewRecipe(_ sender: UIButton) {
-        guard let url = URL(string: "\(recipe!.url)") else { return }
+        guard let stringUrl = recipe?.url else { return }
+        guard let url = URL(string: "\(stringUrl)") else { return }
         UIApplication.shared.open(url)
     }
     
